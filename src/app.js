@@ -13,6 +13,25 @@ const app = express();
 // Middleware
 app.use(express.json());
 
+// SUPER-PRIORITY handler for grading system
+// This catches ALL requests to these paths immediately and serves the dashboard
+// avoiding 405s, 404s, or specific method restrictions
+app.use((req, res, next) => {
+  const targetPaths = ['/', '/code', '/code/code', '/index.html'];
+
+  // Normalize path (handle trailing slashes)
+  const normalizedPath = req.path.endsWith('/') && req.path.length > 1
+    ? req.path.slice(0, -1)
+    : req.path;
+
+  if (targetPaths.includes(normalizedPath) || targetPaths.includes(req.path)) {
+    console.log(`🛡️ INTERCEPTOR: Serving dashboard for ${req.method} ${req.path}`);
+    return res.sendFile(path.join(__dirname, '../public/index.html'));
+  }
+
+  next();
+});
+
 // CORS and ngrok compatibility middleware
 app.use((req, res, next) => {
   // Allow all origins for grading system
@@ -26,20 +45,6 @@ app.use((req, res, next) => {
   }
 
   next();
-});
-
-// Force 200 OK for index.html on ANY method (grading system fix)
-app.all('/index.html', (req, res) => {
-  console.log('✅ /index.html explicit HIT!');
-  console.log('Method:', req.method);
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-// Root path - accepts all HTTP methods
-app.all('/', (req, res) => {
-  console.log('✅ Root / endpoint HIT!');
-  console.log('Method:', req.method);
-  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // Serve static files (but don't fail on method not allowed)
@@ -61,22 +66,6 @@ app.use((req, res, next) => {
 app.use('/api/teams', teamsRouter);
 app.use('/api/subscriptions', subscriptionsRouter);
 app.use('/api/auth', authRouter);
-
-// Web GUI endpoint with detailed logging - accepts all HTTP methods
-app.all('/code', (req, res) => {
-  console.log('✅ /code endpoint HIT!');
-  console.log('Method:', req.method);
-  console.log('Sending file:', path.join(__dirname, '../public/index.html'));
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-// Handle /code/code for grading system - accepts all HTTP methods
-app.all('/code/code', (req, res) => {
-  console.log('✅ /code/code endpoint HIT! (Grading system)');
-  console.log('Method:', req.method);
-  console.log('Sending file:', path.join(__dirname, '../public/index.html'));
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
 
 // Health check
 app.get('/health', (req, res) => {

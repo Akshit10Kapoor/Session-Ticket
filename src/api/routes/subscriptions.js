@@ -160,6 +160,10 @@ router.put('/:id/settings', async (req, res) => {
       [autoRenew, subscriptionId]
     );
 
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Subscription not found' });
+    }
+
     res.json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -170,7 +174,7 @@ router.post('/:id/calculate-price', async (req, res) => {
   try {
     const { newEndDate } = req.body;
     const subscriptionId = req.params.id;
-    
+
     const sub = await db.query(
       'SELECT * FROM subscriptions WHERE id = $1',
       [subscriptionId]
@@ -203,10 +207,10 @@ router.post('/process-renewals', async (req, res) => {
       'INSERT INTO subscriptions (user_id, package_id, start_date, end_date, status, auto_renew) VALUES ($1, $2, $3, $4, $5, $6)',
       [999, 1, new Date(), new Date(), 'active', true]
     );
-    
+
     const subscriptionManager = require('../../services/subscription_manager');
     await subscriptionManager.processRenewals();
-    
+
     res.json({ processed: true });
   } catch (error) {
     res.status(500).json({ error: error.message });

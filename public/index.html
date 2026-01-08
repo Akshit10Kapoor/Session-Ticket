@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Season Tickets Management - Dashboard</title>
+    <meta name="description" content="Manage your season tickets, subscriptions, and team packages with our comprehensive dashboard">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="32" height="32" rx="8" fill="url(#gradient)"/>
+                        <path d="M16 8L20 14H12L16 8Z" fill="white"/>
+                        <path d="M16 24L12 18H20L16 24Z" fill="white"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32">
+                                <stop offset="0%" stop-color="#6366f1"/>
+                                <stop offset="100%" stop-color="#8b5cf6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <h1>Season Tickets</h1>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-view="dashboard">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="13" width="7" height="7" rx="1"/>
+                        <rect x="13" y="3" width="7" height="7" rx="1"/>
+                        <rect x="13" y="13" width="7" height="7" rx="1"/>
+                    </svg>
+                    Dashboard
+                </button>
+                <button class="nav-item" data-view="auth">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 11V7a3 3 0 0 0-6 0v4M7 11h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2z"/>
+                    </svg>
+                    Authentication
+                </button>
+                <button class="nav-item" data-view="teams">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Teams
+                </button>
+                <button class="nav-item" data-view="subscriptions">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2"/>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                    </svg>
+                    Subscriptions
+                </button>
+                <button class="nav-item" data-view="tickets">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M3 12h12"/>
+                    </svg>
+                    Tickets
+                </button>
+                <button class="nav-item" data-view="admin">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"/>
+                    </svg>
+                    Admin
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
+                        </svg>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Guest User</div>
+                        <div class="user-status" id="authStatus">Not authenticated</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="content-header">
+                <h2 id="viewTitle">Dashboard</h2>
+                <div class="header-actions">
+                    <button class="btn-icon" id="refreshBtn" title="Refresh">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 4v6h6M23 20v-6h-6"/>
+                            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard View -->
+            <div id="dashboardView" class="view-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <svg width="24" height="24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Total Teams</div>
+                            <div class="stat-value" id="totalTeams">-</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <svg width="24" height="24" fill="none" stroke="white" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2"/>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Active Subscriptions</div>
+                            <div class="stat-value" id="activeSubscriptions">-</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <svg width="24" height="24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Tickets Used</div>
+                            <div class="stat-value" id="ticketsUsed">-</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                            <svg width="24" height="24" fill="none" stroke="white" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Auth Sessions</div>
+                            <div class="stat-value" id="authSessions">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="action-btn" onclick="switchView('auth')">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M15 11V7a3 3 0 0 0-6 0v4"/>
+                                </svg>
+                                Get Auth Token
+                            </button>
+                            <button class="action-btn" onclick="switchView('subscriptions')">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="7" width="20" height="14" rx="2"/>
+                                </svg>
+                                Create Subscription
+                            </button>
+                            <button class="action-btn" onclick="switchView('teams')">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                </svg>
+                                View Teams
+                            </button>
+                            <button class="action-btn" onclick="switchView('tickets')">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                </svg>
+                                Manage Tickets
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>System Status</h3>
+                        <div class="status-list">
+                            <div class="status-item">
+                                <span class="status-dot status-success"></span>
+                                <span>API Server</span>
+                                <span class="status-badge status-success">Online</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-dot status-success"></span>
+                                <span>Database</span>
+                                <span class="status-badge status-success">Connected</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-dot" id="authStatusDot"></span>
+                                <span>Authentication</span>
+                                <span class="status-badge" id="authStatusBadge">Inactive</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication View -->
+            <div id="authView" class="view-content">
+                <div class="card">
+                    <h3>Generate Access Token</h3>
+                    <form id="tokenForm" class="form">
+                        <div class="form-group">
+                            <label for="userId">User ID</label>
+                            <input type="text" id="userId" placeholder="Enter user ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail">Email</label>
+                            <input type="email" id="userEmail" placeholder="user@example.com" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generate Token</button>
+                    </form>
+                    <div id="tokenResult" class="result-box" style="display: none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Validate Token</h3>
+                    <form id="validateForm" class="form">
+                        <div class="form-group">
+                            <label for="validateToken">Access Token</label>
+                            <input type="text" id="validateToken" placeholder="Enter token to validate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Validate</button>
+                    </form>
+                    <div id="validateResult" class="result-box" style="display: none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Logout</h3>
+                    <form id="logoutForm" class="form">
+                        <div class="form-group">
+                            <label for="logoutToken">Access Token</label>
+                            <input type="text" id="logoutToken" placeholder="Enter token to logout" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Logout</button>
+                    </form>
+                    <div id="logoutResult" class="result-box" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Teams View -->
+            <div id="teamsView" class="view-content">
+                <div class="card">
+                    <h3>All Teams</h3>
+                    <button class="btn btn-primary" id="loadTeamsBtn">Load Teams</button>
+                    <div id="teamsList" class="data-list"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Team Packages</h3>
+                    <form id="packagesForm" class="form">
+                        <div class="form-group">
+                            <label for="teamId">Team ID</label>
+                            <input type="number" id="teamId" placeholder="Enter team ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Get Packages</button>
+                    </form>
+                    <div id="packagesList" class="data-list"></div>
+                </div>
+            </div>
+
+            <!-- Subscriptions View -->
+            <div id="subscriptionsView" class="view-content">
+                <div class="card">
+                    <h3>Create Subscription</h3>
+                    <form id="createSubForm" class="form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subUserId">User ID</label>
+                                <input type="text" id="subUserId" placeholder="user123" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subPackageId">Package ID</label>
+                                <input type="number" id="subPackageId" placeholder="1" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="subSeats">Seats</label>
+                                <input type="number" id="subSeats" placeholder="2" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subAutoRenew">Auto Renew</label>
+                                <select id="subAutoRenew">
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Subscription</button>
+                    </form>
+                    <div id="createSubResult" class="result-box" style="display: none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Get Subscription Details</h3>
+                    <form id="getSubForm" class="form">
+                        <div class="form-group">
+                            <label for="getSubId">Subscription ID</label>
+                            <input type="number" id="getSubId" placeholder="Enter subscription ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Get Details</button>
+                    </form>
+                    <div id="getSubResult" class="result-box" style="display: none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Renew Subscription</h3>
+                    <form id="renewSubForm" class="form">
+                        <div class="form-group">
+                            <label for="renewSubId">Subscription ID</label>
+                            <input type="number" id="renewSubId" placeholder="Enter subscription ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Renew</button>
+                    </form>
+                    <div id="renewSubResult" class="result-box" style="display: none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Cancel Subscription</h3>
+                    <form id="cancelSubForm" class="form">
+                        <div class="form-group">
+                            <label for="cancelSubId">Subscription ID</label>
+                            <input type="number" id="cancelSubId" placeholder="Enter subscription ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
+                    <div id="cancelSubResult" class="result-box" style="display: none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Update Settings</h3>
+                    <form id="settingsForm" class="form">
+                        <div class="form-group">
+                            <label for="settingsSubId">Subscription ID</label>
+                            <input type="number" id="settingsSubId" placeholder="Enter subscription ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsAutoRenew">Auto Renew</label>
+                            <select id="settingsAutoRenew">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Settings</button>
+                    </form>
+                    <div id="settingsResult" class="result-box" style="display: none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Calculate Price</h3>
+                    <form id="priceForm" class="form">
+                        <div class="form-group">
+                            <label for="priceSubId">Subscription ID</label>
+                            <input type="number" id="priceSubId" placeholder="Enter subscription ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Calculate</button>
+                    </form>
+                    <div id="priceResult" class="result-box" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Tickets View -->
+            <div id="ticketsView" class="view-content">
+                <div class="card">
+                    <h3>Use Ticket</h3>
+                    <form id="useTicketForm" class="form">
+                        <div class="form-group">
+                            <label for="useTicketSubId">Subscription ID</label>
+                            <input type="number" id="useTicketSubId" placeholder="Enter subscription ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="useTicketId">Ticket ID</label>
+                            <input type="number" id="useTicketId" placeholder="Enter ticket ID" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Use Ticket</button>
+                    </form>
+                    <div id="useTicketResult" class="result-box" style="display: none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Assign Ticket</h3>
+                    <form id="assignTicketForm" class="form">
+                        <div class="form-group">
+                            <label for="assignTicketSubId">Subscription ID</label>
+                            <input type="number" id="assignTicketSubId" placeholder="Enter subscription ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assignTicketGameId">Game ID</label>
+                            <input type="number" id="assignTicketGameId" placeholder="Enter game ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assignTicketSeat">Seat Number</label>
+                            <input type="text" id="assignTicketSeat" placeholder="A12" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Assign Ticket</button>
+                    </form>
+                    <div id="assignTicketResult" class="result-box" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Admin View -->
+            <div id="adminView" class="view-content">
+                <div class="card">
+                    <h3>Process Renewals</h3>
+                    <p>Trigger the renewal worker to process all pending subscription renewals.</p>
+                    <button class="btn btn-primary" id="processRenewalsBtn">Process Renewals</button>
+                    <div id="renewalsResult" class="result-box" style="display: none;"></div>
+                </div>
+
+                <div class="card">
+                    <h3>API Endpoint Tester</h3>
+                    <form id="apiTestForm" class="form">
+                        <div class="form-group">
+                            <label for="testMethod">Method</label>
+                            <select id="testMethod">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="testEndpoint">Endpoint</label>
+                            <input type="text" id="testEndpoint" placeholder="/api/teams" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="testBody">Request Body (JSON)</label>
+                            <textarea id="testBody" rows="4" placeholder='{"key": "value"}'></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Test Endpoint</button>
+                    </form>
+                    <div id="apiTestResult" class="result-box" style="display: none;"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="/app.js"></script>
+</body>
+</html>

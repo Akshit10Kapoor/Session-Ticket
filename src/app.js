@@ -28,6 +28,13 @@ app.use((req, res, next) => {
   next();
 });
 
+// Root path - accepts all HTTP methods (MUST be before static files)
+app.all('/', (req, res) => {
+  console.log('✅ Root / endpoint HIT!');
+  console.log('Method:', req.method);
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, '../public')));
 

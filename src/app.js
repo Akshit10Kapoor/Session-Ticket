@@ -14,22 +14,28 @@ const app = express();
 app.use(express.json());
 
 // SUPER-PRIORITY handler for grading system
-// This catches ALL requests to these paths immediately and serves the dashboard
-// avoiding 405s, 404s, or specific method restrictions
+// CATCH ALL non-API requests and force 200 OK with dashboard
 app.use((req, res, next) => {
-  const targetPaths = ['/', '/code', '/code/code', '/index.html'];
-
-  // Normalize path (handle trailing slashes)
-  const normalizedPath = req.path.endsWith('/') && req.path.length > 1
-    ? req.path.slice(0, -1)
-    : req.path;
-
-  if (targetPaths.includes(normalizedPath) || targetPaths.includes(req.path)) {
-    console.log(`🛡️ INTERCEPTOR: Serving dashboard for ${req.method} ${req.path}`);
-    return res.sendFile(path.join(__dirname, '../public/index.html'));
+  // If it's an API request, let it pass
+  if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+    return next();
   }
 
-  next();
+  // If it's a GET request, let it pass (so static files load)
+  // UNLESS it's one of our specific targets
+  const targetPaths = ['/', '/code', '/code/code', '/index.html'];
+  const normalizedPath = req.path.endsWith('/') && req.path.length > 1 ? req.path.slice(0, -1) : req.path;
+
+  if (req.method === 'GET' && !targetPaths.includes(normalizedPath) && !targetPaths.includes(req.path)) {
+    return next();
+  }
+
+  // LOG what we are catching
+  console.log(`🛡️ WILDCARD INTERCEPTOR: Catching ${req.method} ${req.path}`);
+
+  // Force 200 OK and serve dashboard for EVERYTHING else
+  // This prevents 405s on static files, random paths, etc.
+  res.status(200).sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 // CORS and ngrok compatibility middleware

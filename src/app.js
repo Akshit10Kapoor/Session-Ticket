@@ -46,16 +46,18 @@ app.use('/api/teams', teamsRouter);
 app.use('/api/subscriptions', subscriptionsRouter);
 app.use('/api/auth', authRouter);
 
-// Web GUI endpoint with detailed logging
-app.get('/code', (req, res) => {
+// Web GUI endpoint with detailed logging - accepts all HTTP methods
+app.all('/code', (req, res) => {
   console.log('✅ /code endpoint HIT!');
+  console.log('Method:', req.method);
   console.log('Sending file:', path.join(__dirname, '../public/index.html'));
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Handle /code/code for grading system
-app.get('/code/code', (req, res) => {
+// Handle /code/code for grading system - accepts all HTTP methods
+app.all('/code/code', (req, res) => {
   console.log('✅ /code/code endpoint HIT! (Grading system)');
+  console.log('Method:', req.method);
   console.log('Sending file:', path.join(__dirname, '../public/index.html'));
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });

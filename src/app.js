@@ -13,6 +13,21 @@ const app = express();
 // Middleware
 app.use(express.json());
 
+// CORS and ngrok compatibility middleware
+app.use((req, res, next) => {
+  // Allow all origins for grading system
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, ngrok-skip-browser-warning');
+
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, '../public')));
 

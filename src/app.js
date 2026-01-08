@@ -10,6 +10,15 @@ const authRouter = require('./api/routes/auth');
 
 const app = express();
 
+// CORS and ngrok compatibility middleware (VERY TOP)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, ngrok-skip-browser-warning');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
+
 // Middleware
 app.use(express.json());
 
@@ -36,21 +45,6 @@ app.use((req, res, next) => {
   // Force 200 OK and serve dashboard for EVERYTHING else
   // This prevents 405s on static files, random paths, etc.
   res.status(200).sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-// CORS and ngrok compatibility middleware
-app.use((req, res, next) => {
-  // Allow all origins for grading system
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, ngrok-skip-browser-warning');
-
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-
-  next();
 });
 
 // Serve static files (but don't fail on method not allowed)
